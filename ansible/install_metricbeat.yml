@@ -1,0 +1,34 @@
+---
+  - name: Configure metricbeat on all VMs
+    hosts: webservers
+    remote_user: azadmin
+    become: true
+    tasks:
+      # Using commnds
+      - name: download metricbeat
+        command: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.6.1-amd64.deb
+  
+      - name: install metric
+        command: sudo dpkg -i metricbeat-7.6.1-amd64.deb
+  
+      - name: copy metricbeat config
+        ansible.builtin.copy:
+          src: /etc/ansible/files/metricbeat-config.file
+          dest: /etc/metricbeat/metricbeat.yml
+  
+  
+      - name: all in shell now1
+        command: sudo metricbeat modules enable docker 
+  
+      - name: nextone
+        command: sudo metricbeat setup
+   
+      - name: lastoneone
+        command: sudo metricbeat -e
+  
+  
+      - name: enable filebeat on boot
+        systemd:
+          name: metricbeat
+          enabled: yes
+  

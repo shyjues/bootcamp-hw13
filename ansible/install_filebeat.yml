@@ -1,0 +1,31 @@
+---
+  - name: Configure filebeat on all VMs
+    hosts: webservers
+    remote_user: azadmin
+    become: true
+    tasks:
+      # Using commnds
+      - name: download filebeat
+        command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+  
+      - name: install filebeat
+        command: sudo dpkg -i filebeat-7.6.1-amd64.deb
+  
+      - name: copy filebeatconfig
+        ansible.builtin.copy:
+          src: /etc/ansible/files/filebeat-config.yml
+          dest: /etc/filebeat/filebeat.yml
+  
+      - name: run filebeat start commands
+        command: sudo filebeat modules enable system
+  
+      - name: run filebeat start commands-2
+        command: sudo filebeat setup
+  
+      - name: run filebeat start commands-3
+        command: sudo service filebeat start
+  
+      - name: enable filebeat on boot
+        systemd:
+          name: filebeat
+          enabled: yes
